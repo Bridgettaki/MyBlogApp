@@ -1,0 +1,10 @@
+.footer-main {
+  padding: 4px;
+  background: linear-gradient(90deg, #ff1493, #8a2be2); 
+  text-align: center;
+  color: black;
+  margin-top: auto;
+}
+.footer-main p {
+  margin: 0;
+}

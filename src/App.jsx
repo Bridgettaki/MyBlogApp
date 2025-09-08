@@ -1,20 +1,56 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import PostList from "./components/PostList";
-import PostForm from "./components/PostForm";
+import React, { useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import Header from "./components/header";
+import Footer from "./components/footer";
+import Homepage from "./pages/homepage";
+import Blog from "./pages/blog";
+import Profile from "./pages/profile";
+import NoPageFound from "./pages/no_page_found";
+import "./App.css";
+import ViewBlog from "./pages/view_blog";
 
-export default function App() {
+function App() {
+  const [blogListData, setBlogListData] = useState([]);
+   const navigate = useNavigate();
+
+  const onGetDataFromBlogComponent = (blogData) => {
+    setBlogListData((prevDataArray) => [blogData, ...prevDataArray]);
+    console.log(blogData);
+  };
+
+   const onGetUpdatedDataFromBlogComponent = (blogData) => {
+     let newState = [...blogListData];
+    newState[blogData.blogID] = blogData;
+    setBlogListData(newState)
+    console.log(blogData);
+  };
+
+  const onDeleteDataFromBlog = (blogId) => {
+    setBlogListData((prevState) =>
+      prevState.splice(blogId, 1)
+    );
+     navigate({pathname:'/'});
+    console.log(blogId);
+  };
+
   return (
-    
-    <Router>
-      <Navbar />
-      <div style={{ padding: "20px" }}>
-        <Routes>
-          <Route path="/" element={<PostList />} />
-          <Route path="/create" element={<PostForm />} />
-          <Route path="/edit/:id" element={<PostForm isEdit={true} />} />
-        </Routes>
-      </div>
-    </Router>
+    <React.Fragment>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Homepage blogListData={blogListData} />} />
+        <Route
+          path="/blog/*"
+          element={
+            <Blog onPassDatatoAppComponent={onGetDataFromBlogComponent} blogList={blogListData} onUpdateDatatoAppComponent={onGetUpdatedDataFromBlogComponent} onDeleteBlogFromBLogList={onDeleteDataFromBlog}/>
+          }
+        />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/view/*" element={<ViewBlog blogList={blogListData}/>} />
+        <Route path="*" element={<NoPageFound />} />
+      </Routes>
+      <Footer />
+    </React.Fragment>
   );
 }
+
+export default App;
